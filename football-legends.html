@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOAT Wars — Ronaldo vs Messi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold2: #f0d080;
+    --cr7-red: #cc0000;
+    --cr7-dark: #1a0000;
+    --messi-blue: #0077c8;
+    --messi-dark: #000d1a;
+    --bg: #050508;
+    --text: #e8e4d8;
+    --dim: #888070;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== NOISE OVERLAY ===== */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .5;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1000 0%, var(--bg) 70%);
+  }
+  .hero-bg-lines {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(201,168,76,.06) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(201,168,76,.04) 80px);
+  }
+  .hero-glow {
+    position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 600px;
+    background: radial-gradient(ellipse, rgba(201,168,76,.15) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite alternate;
+  }
+  @keyframes pulse { from { transform: translateX(-50%) scale(1); opacity:.6; } to { transform: translateX(-50%) scale(1.15); opacity:1; } }
+
+  .hero-vs {
+    position: relative; z-index: 2; text-align: center;
+    animation: fadeUp 1.2s ease both;
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem; letter-spacing: .4em; color: var(--gold);
+    text-transform: uppercase; margin-bottom: 1.5rem;
+    opacity: .8;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 15vw, 13rem);
+    line-height: .9;
+    letter-spacing: -.02em;
+    background: linear-gradient(135deg, #fff 20%, var(--gold2) 50%, var(--gold) 80%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 60px rgba(201,168,76,.3));
+  }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: clamp(1rem, 2.5vw, 1.6rem);
+    color: var(--dim); margin-top: 1rem; letter-spacing: .05em;
+  }
+  .hero-divider {
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 2.5rem auto;
+  }
+
+  /* ===== NAV TABS ===== */
+  .nav-wrap {
+    position: sticky; top: 0; z-index: 1000;
+    background: rgba(5,5,8,.85);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid rgba(201,168,76,.15);
+  }
+  .nav {
+    display: flex; align-items: stretch; overflow-x: auto;
+    scrollbar-width: none; max-width: 1400px; margin: 0 auto;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    flex: 1 1 auto; min-width: 120px;
+    padding: .9rem 1.4rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--dim);
+    border: none; background: none; cursor: pointer;
+    position: relative; transition: color .3s;
+    white-space: nowrap;
+  }
+  .nav-tab::after {
+    content: '';
+    position: absolute; bottom: 0; left: 10%; right: 10%; height: 2px;
+    background: var(--gold);
+    transform: scaleX(0); transition: transform .35s cubic-bezier(.77,0,.18,1);
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--gold); }
+  .nav-tab.active::after { transform: scaleX(1); }
+  .nav-tab.cr7-tab.active { color: #ff6060; }
+  .nav-tab.cr7-tab.active::after { background: var(--cr7-red); }
+  .nav-tab.messi-tab.active { color: #60b0ff; }
+  .nav-tab.messi-tab.active::after { background: var(--messi-blue); }
+
+  /* ===== SECTIONS ===== */
+  .section { display: none; animation: fadeUp .6s ease both; }
+  .section.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-wrap { max-width: 1300px; margin: 0 auto; padding: 5rem 2rem; }
+
+  /* ===== PLAYER HERO ===== */
+  .player-hero {
+    position: relative; overflow: hidden; border-radius: 4px;
+    min-height: 480px; display: flex; align-items: flex-end;
+    margin-bottom: 5rem;
+  }
+  .player-hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .player-hero-bg.cr7 {
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(200,0,0,.25) 0%, transparent 60%),
+      linear-gradient(135deg, #0a0000 30%, #1a0500 100%);
+  }
+  .player-hero-bg.messi {
+    background:
+      radial-gradient(ellipse at 30% 50%, rgba(0,119,200,.25) 0%, transparent 60%),
+      linear-gradient(135deg, #000510 30%, #000a1a 100%);
+  }
+  .player-hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,.03) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,.03) 40px);
+  }
+  .player-hero-number {
+    position: absolute; right: -1rem; top: -2rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(12rem, 28vw, 22rem);
+    line-height: 1; color: rgba(255,255,255,.03);
+    user-select: none; pointer-events: none;
+    letter-spacing: -.05em;
+  }
+  .player-hero-content {
+    position: relative; z-index: 2;
+    padding: 3rem;
+  }
+  .player-hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 9vw, 7rem);
+    line-height: .9; letter-spacing: -.01em;
+    margin-bottom: .5rem;
+  }
+  .cr7-name { color: #ff4444; filter: drop-shadow(0 0 40px rgba(200,0,0,.5)); }
+  .messi-name { color: #4499ff; filter: drop-shadow(0 0 40px rgba(0,119,200,.5)); }
+  .player-hero-dob {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem; letter-spacing: .3em; color: var(--dim); margin-bottom: 1.5rem;
+  }
+  .player-hero-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .tag {
+    padding: .3rem .8rem;
+    font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: .15em;
+    border: 1px solid rgba(201,168,76,.3); color: var(--gold);
+    border-radius: 2px; text-transform: uppercase;
+  }
+
+  /* ===== STAT STRIP ===== */
+  .stat-strip {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1px; background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.1); border-radius: 4px;
+    margin-bottom: 5rem; overflow: hidden;
+  }
+  .stat-item {
+    background: rgba(5,5,8,.95); padding: 2rem 1.5rem; text-align: center;
+    transition: background .3s;
+  }
+  .stat-item:hover { background: rgba(201,168,76,.05); }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1; color: var(--gold);
+    filter: drop-shadow(0 0 15px rgba(201,168,76,.4));
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .6rem; letter-spacing: .2em;
+    color: var(--dim); text-transform: uppercase; margin-top: .4rem;
+  }
+
+  /* ===== CONTENT BLOCKS ===== */
+  .content-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: start; margin-bottom: 5rem;
+  }
+  @media(max-width: 800px) { .content-grid { grid-template-columns: 1fr; } }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .4em; color: var(--gold);
+    text-transform: uppercase; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(201,168,76,.4), transparent);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900; line-height: 1.1;
+    margin-bottom: 1.5rem; color: var(--text);
+  }
+  .section-body {
+    font-size: 1.15rem; line-height: 1.8;
+    color: #c0b8a0; font-weight: 300;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: linear-gradient(180deg, var(--gold), transparent);
+  }
+  .timeline-item { position: relative; margin-bottom: 2.5rem; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -2.35rem; top: .4rem;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); border: 2px solid var(--bg);
+    box-shadow: 0 0 10px var(--gold);
+  }
+  .timeline-year {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; color: var(--gold); line-height: 1; margin-bottom: .3rem;
+  }
+  .timeline-text { font-size: 1rem; color: #b0a888; line-height: 1.6; }
+
+  /* ===== QUOTES ===== */
+  .quotes-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; margin-bottom: 5rem;
+  }
+  .quote-card {
+    background: rgba(255,255,255,.02);
+    border: 1px solid rgba(201,168,76,.12);
+    border-radius: 4px; padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: border-color .3s, transform .3s;
+  }
+  .quote-card:hover { border-color: rgba(201,168,76,.35); transform: translateY(-4px); }
+  .quote-card::before {
+    content: '"'; font-family: 'Playfair Display', serif; font-size: 5rem;
+    position: absolute; top: -.5rem; left: 1rem;
+    color: rgba(201,168,76,.1); line-height: 1; pointer-events: none;
+  }
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 1.2rem; line-height: 1.6;
+    color: var(--text); position: relative; z-index: 1; margin-bottom: 1rem;
+  }
+  .quote-source {
+    font-family: 'Space Mono', monospace; font-size: .6rem;
+    letter-spacing: .2em; color: var(--gold); text-transform: uppercase;
+  }
+
+  /* ===== TROPHIES ===== */
+  .trophies-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem; margin-bottom: 5rem;
+  }
+  .trophy-card {
+    background: rgba(201,168,76,.04);
+    border: 1px solid rgba(201,168,76,.1);
+    border-radius: 4px; padding: 1.5rem;
+    transition: all .3s; text-align: center;
+  }
+  .trophy-card:hover {
+    background: rgba(201,168,76,.1);
+    border-color: rgba(201,168,76,.4);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  }
+  .trophy-icon { font-size: 2.5rem; margin-bottom: .8rem; }
+  .trophy-title {
+    font-family: 'Space Mono', monospace; font-size: .65rem;
+    letter-spacing: .15em; color: var(--gold); text-transform: uppercase;
+    margin-bottom: .3rem;
+  }
+  .trophy-detail { font-size: .95rem; color: #b0a888; }
+
+  /* ===== CLUBS ===== */
+  .clubs-section { background: var(--bg); }
+  .club-card {
+    border: 1px solid rgba(201,168,76,.12);
+    border-radius: 4px; overflow: hidden; margin-bottom: 2rem;
+    transition: border-color .3s;
+  }
+  .club-card:hover { border-color: rgba(201,168,76,.35); }
+  .club-header {
+    padding: 2.5rem 2.5rem 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  .club-header-cr7 { background: linear-gradient(135deg, #0a0000, #1a0800); }
+  .club-header-barca { background: linear-gradient(135deg, #06000d, #0a0015); }
+  .club-header-psg { background: linear-gradient(135deg, #00030d, #000818); }
+  .club-header-inter { background: linear-gradient(135deg, #00030a, #000510); }
+  .club-header-man-utd { background: linear-gradient(135deg, #0d0000, #1a0000); }
+  .club-header-juventus { background: linear-gradient(135deg, #050505, #0d0d0d); }
+  .club-header-madrid { background: linear-gradient(135deg, #080500, #120e00); }
+  .club-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 4rem); line-height: 1;
+  }
+  .club-years {
+    font-family: 'Space Mono', monospace; font-size: .65rem;
+    letter-spacing: .3em; color: var(--dim); margin-top: .3rem;
+  }
+  .club-value {
+    display: inline-block; margin-top: 1rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+    color: var(--gold); letter-spacing: .05em;
+  }
+  .club-value-label {
+    font-family: 'Space Mono', monospace; font-size: .55rem;
+    letter-spacing: .2em; color: var(--dim); text-transform: uppercase;
+    display: block; margin-top: -.2rem;
+  }
+  .club-body { padding: 1.5rem 2.5rem 2.5rem; }
+  .club-stats-row {
+    display: flex; flex-wrap: wrap; gap: 2rem;
+    padding: 1.5rem 0; border-top: 1px solid rgba(255,255,255,.05);
+  }
+  .club-stat-item .club-stat-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold);
+  }
+  .club-stat-item .club-stat-label {
+    font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: .15em;
+    color: var(--dim); text-transform: uppercase;
+  }
+
+  /* ===== COMPARISON ===== */
+  .vs-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 2rem; align-items: start; margin-bottom: 5rem;
+  }
+  @media(max-width: 700px) {
+    .vs-grid { grid-template-columns: 1fr; }
+    .vs-divider { display: none; }
+  }
+  .vs-divider {
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 2rem; gap: 1rem;
+  }
+  .vs-divider::before {
+    content: 'VS';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; color: var(--gold);
+    filter: drop-shadow(0 0 20px rgba(201,168,76,.5));
+  }
+  .vs-line {
+    flex: 1; width: 1px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+  }
+
+  .vs-card {
+    border: 1px solid rgba(201,168,76,.12);
+    border-radius: 4px; padding: 2rem; position: relative;
+    transition: border-color .3s;
+  }
+  .vs-card:hover { border-color: rgba(201,168,76,.3); }
+  .vs-card.cr7-card { background: rgba(200,0,0,.04); }
+  .vs-card.messi-card { background: rgba(0,119,200,.04); }
+
+  .vs-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem; margin-bottom: 1.5rem;
+  }
+  .vs-name.cr7 { color: #ff4444; }
+  .vs-name.messi { color: #4499ff; }
+
+  /* ===== BAR COMPARISON ===== */
+  .compare-bars { margin-bottom: 5rem; }
+  .compare-row {
+    display: grid; grid-template-columns: 1fr 180px 1fr;
+    align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .bar-wrap { height: 6px; border-radius: 3px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 1.5s cubic-bezier(.77,0,.18,1);
+    width: 0;
+  }
+  .bar-fill.cr7 { background: linear-gradient(90deg, var(--cr7-red), #ff6060); margin-left: auto; }
+  .bar-fill.messi { background: linear-gradient(90deg, #4499ff, var(--messi-blue)); }
+  .bar-left .bar-wrap { direction: rtl; }
+  .compare-label {
+    font-family: 'Space Mono', monospace; font-size: .65rem;
+    letter-spacing: .15em; color: var(--dim); text-align: center; text-transform: uppercase;
+  }
+  .compare-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; text-align: center; color: var(--text);
+  }
+
+  /* ===== VERDICT ===== */
+  .verdict {
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: 4px; padding: 4rem;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,.08) 0%, transparent 70%);
+    text-align: center; margin-top: 5rem;
+  }
+  .verdict-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-style: italic; color: var(--gold); margin-bottom: 1.5rem;
+  }
+  .verdict-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 1.3rem;
+    line-height: 1.8; color: #c0b8a0; max-width: 800px; margin: 0 auto;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 1px solid rgba(201,168,76,.1);
+    padding: 3rem 2rem; text-align: center;
+    font-family: 'Space Mono', monospace; font-size: .6rem;
+    letter-spacing: .3em; color: var(--dim); text-transform: uppercase;
+  }
+
+  /* ===== HOVER FX ===== */
+  .scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s, transform .7s; }
+  .scroll-reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-vs">
+    <div class="hero-eyebrow">Величайший футбольный дебат всех времён</div>
+    <div class="hero-title">GOAT<br>WARS</div>
+    <div class="hero-divider"></div>
+    <div class="hero-subtitle">Роналдо против Месси — Легенды, которые изменили игру</div>
+  </div>
+</section>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <nav class="nav">
+    <button class="nav-tab cr7-tab active" onclick="showTab('cr7')">🔴 Криштиану</button>
+    <button class="nav-tab messi-tab" onclick="showTab('messi')">🔵 Месси</button>
+    <button class="nav-tab" onclick="showTab('cr7clubs')">Клубы CR7</button>
+    <button class="nav-tab" onclick="showTab('messiclubs')">Клубы Месси</button>
+    <button class="nav-tab" onclick="showTab('compare')">⚔️ Сравнение</button>
+  </nav>
+</div>
+
+<!-- ==================== CR7 ==================== -->
+<section id="cr7" class="section active">
+  <div class="page-wrap">
+
+    <div class="player-hero">
+      <div class="player-hero-bg cr7"></div>
+      <div class="player-hero-grid"></div>
+      <div class="player-hero-number">7</div>
+      <div class="player-hero-content">
+        <div class="player-hero-dob">05.02.1985 · Фуншал, Мадейра, Португалия</div>
+        <div class="player-hero-name cr7-name">Криштиану<br>Роналдо</div>
+        <div class="player-hero-tags">
+          <span class="tag">CR7</span><span class="tag">Ballon d'Or ×5</span>
+          <span class="tag">UCL ×5</span><span class="tag">800+ голов</span>
+          <span class="tag">Король Instagram</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="section-label scroll-reveal">Карьерная статистика</div>
+    <div class="stat-strip scroll-reveal">
+      <div class="stat-item"><div class="stat-num">900+</div><div class="stat-label">Голов в карьере</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Золотой мяч</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Лига чемпионов</div></div>
+      <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Евро / NL</div></div>
+      <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">Лиги чемпионов (рекорд)</div></div>
+      <div class="stat-item"><div class="stat-num">213</div><div class="stat-label">Матчей за сборную</div></div>
+      <div class="stat-item"><div class="stat-num">136</div><div class="stat-label">Голов за Португалию</div></div>
+      <div class="stat-item"><div class="stat-num">€200M</div><div class="stat-label">Годовая зарплата</div></div>
+    </div>
+
+    <!-- STORY -->
+    <div class="content-grid scroll-reveal">
+      <div>
+        <div class="section-label">Происхождение легенды</div>
+        <div class="section-title">Из трущоб Мадейры на вершину мира</div>
+        <div class="section-body">
+          Криштиану Роналдо дос Сантос Авейру родился на острове Мадейра в бедной семье. Отец — садовник, мать — повариха. С детства он жил в маленьком домике, где не было горячей воды. Уже в 8 лет было ясно — этот мальчик не такой, как все.
+          <br><br>
+          В 12 лет он покинул Мадейру и поехал в Лиссабон, плача от тоски по дому. В академии «Спортинга» тренеры увидели феноменальный талант. В 17 лет его купил «Манчестер Юнайтед» за рекордные деньги — и началась эпоха.
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Детство и путь</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-year">1985</div><div class="timeline-text">Рождение в Фуншале, Мадейра. Семья из 4 детей, отец работал садовником в местном клубе.</div></div>
+          <div class="timeline-item"><div class="timeline-year">1993</div><div class="timeline-text">Записался в академию «Андориньяш». В 10 лет ему предложили контракт с «Насьонал».</div></div>
+          <div class="timeline-item"><div class="timeline-year">1997</div><div class="timeline-text">Переход в академию «Спортинга» в Лиссабоне. Разлука с семьёй, слёзы, одиночество — и работа до изнеможения.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2002</div><div class="timeline-text">Дебют за основную команду «Спортинга». В 17 лет стал первым игроком, выступавшим за юношескую, молодёжную и первую команды в одном сезоне.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2003</div><div class="timeline-text">«Манчестер Юнайтед» подписывает его за £12.24 млн. Сэр Алекс Фергюсон: «Это лучший молодой игрок, которого я когда-либо видел».</div></div>
+          <div class="timeline-item"><div class="timeline-year">2008</div><div class="timeline-text">Первый Золотой мяч. Рекордный переход в «Реал Мадрид» за €80 млн.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2009–2018</div><div class="timeline-text">9 лет в «Реале» — 450 голов, 4 Лиги чемпионов, эпоха господства.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2024</div><div class="timeline-text">Al Nassr, Саудовская Аравия. 900+ голов в карьере. Неостановим.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUOTES -->
+    <div class="section-label scroll-reveal">Его слова</div>
+    <div class="quotes-grid scroll-reveal">
+      <div class="quote-card">
+        <div class="quote-text">«Твои ограничения существуют только в твоём уме. Устраняй ограничения — и откроешь бесконечные возможности.»</div>
+        <div class="quote-source">Криштиану Роналдо</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Я не боюсь неудачи. Я боюсь не попробовать. Я боюсь сожаления — о том, что мог сделать, но не сделал.»</div>
+        <div class="quote-source">CR7 — О мотивации</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Люди думают, что я высокомерен, эгоистичен. Но они просто не знают меня.»</div>
+        <div class="quote-source">Автобиография</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Я начинал с нуля. Бедность никогда не пугала — она делала меня голоднее, злее, сильнее.»</div>
+        <div class="quote-source">Детство, Мадейра</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Лучший игрок в истории? Вы спрашиваете меня — или хотите честного ответа?»</div>
+        <div class="quote-source">Пресс-конференция, 2017</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Успех — не случайность. Это тяжёлая работа, настойчивость, обучение, жертвенность и, прежде всего, любовь к тому, что ты делаешь.»</div>
+        <div class="quote-source">Криштиану Роналдо</div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="section-label scroll-reveal">Трофеи и достижения</div>
+    <div class="trophies-grid scroll-reveal">
+      <div class="trophy-card"><div class="trophy-icon">🏆</div><div class="trophy-title">Лига чемпионов</div><div class="trophy-detail">2008, 2014, 2016, 2017, 2018 — 5 раз!</div></div>
+      <div class="trophy-card"><div class="trophy-icon">⚽</div><div class="trophy-title">Чемпион Англии</div><div class="trophy-detail">3 раза с Манчестер Юнайтед</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🥇</div><div class="trophy-title">Чемпион Испании</div><div class="trophy-detail">2 раза с Реал Мадрид</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🌟</div><div class="trophy-title">Золотой мяч</div><div class="trophy-detail">2008, 2013, 2014, 2016, 2017</div></div>
+      <div class="trophy-card"><div class="trophy-icon">👑</div><div class="trophy-title">Евро 2016</div><div class="trophy-detail">Первый крупный трофей со сборной Португалии</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🎯</div><div class="trophy-title">Лига наций</div><div class="trophy-detail">2018/19 с Португалией</div></div>
+      <div class="trophy-card"><div class="trophy-icon">📊</div><div class="trophy-title">Рекорд ЛЧ</div><div class="trophy-detail">140+ голов — рекорд всех времён в ЛЧ</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🌍</div><div class="trophy-title">Рекорд сборной</div><div class="trophy-detail">136 голов за Португалию — рекорд мира</div></div>
+      <div class="trophy-card"><div class="trophy-icon">⭐</div><div class="trophy-title">Серия А</div><div class="trophy-detail">2 раза с Ювентусом</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🏅</div><div class="trophy-title">The Best FIFA</div><div class="trophy-detail">2016, 2017, 2019 — Лучший игрок FIFA</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== MESSI ==================== -->
+<section id="messi" class="section">
+  <div class="page-wrap">
+
+    <div class="player-hero">
+      <div class="player-hero-bg messi"></div>
+      <div class="player-hero-grid"></div>
+      <div class="player-hero-number">10</div>
+      <div class="player-hero-content">
+        <div class="player-hero-dob">24.06.1987 · Росарио, Санта-Фе, Аргентина</div>
+        <div class="player-hero-name messi-name">Лионель<br>Месси</div>
+        <div class="player-hero-tags">
+          <span class="tag">La Pulga</span><span class="tag">Ballon d'Or ×8</span>
+          <span class="tag">Чемпион мира</span><span class="tag">700+ голов</span>
+          <span class="tag">GOAT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label scroll-reveal">Карьерная статистика</div>
+    <div class="stat-strip scroll-reveal">
+      <div class="stat-item"><div class="stat-num">850+</div><div class="stat-label">Голов в карьере</div></div>
+      <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Золотой мяч</div></div>
+      <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Лига чемпионов</div></div>
+      <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Чемпионат мира</div></div>
+      <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Кубок Америки</div></div>
+      <div class="stat-item"><div class="stat-num">185</div><div class="stat-label">Матчей за сборную</div></div>
+      <div class="stat-item"><div class="stat-num">109</div><div class="stat-label">Голов за Аргентину</div></div>
+      <div class="stat-item"><div class="stat-num">€65M</div><div class="stat-label">Годовая зарплата</div></div>
+    </div>
+
+    <div class="content-grid scroll-reveal">
+      <div>
+        <div class="section-label">История маленького великана</div>
+        <div class="section-title">Гормон роста, Барселона и покорение вселенной</div>
+        <div class="section-body">
+          В 11 лет врачи поставили Лионелю диагноз — дефицит гормона роста. Его семья не могла позволить лечение стоимостью $1000 в месяц. «Барселона» предложила оплатить лечение в обмен на переезд в Испанию.
+          <br><br>
+          Маленький мальчик из Аргентины с лечебным гормоном вырос в величайшего игрока в истории. Он никогда не говорит лишнего. Просто выходит на поле — и творит невозможное.
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Путь к величию</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-year">1987</div><div class="timeline-text">Родился в Росарио, Аргентина. С 5 лет играл в футбол с братьями и кузенами на улицах.</div></div>
+          <div class="timeline-item"><div class="timeline-year">1995</div><div class="timeline-text">Пришёл в академию «Ньюэллс Олд Бойз». Все тренеры были поражены: этот ребёнок — явление природы.</div></div>
+          <div class="timeline-item"><div class="timeline-year">1998</div><div class="timeline-text">Диагноз — дефицит гормона роста. Семья не может позволить лечение. «Барселона» протягивает руку помощи.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2000</div><div class="timeline-text">Переезд в Барселону. 13-летний Лионель плачет по ночам, скучает по Аргентине, но продолжает тренироваться.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2004</div><div class="timeline-text">Дебют за основную команду «Барсы» в возрасте 17 лет. Сразу ясно — родилась легенда.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2009</div><div class="timeline-text">Первый Золотой мяч. Начало эпохи — 4 подряд с 2009 по 2012.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2022</div><div class="timeline-text">Чемпионат мира в Катаре. Финал с Францией. Пенальти. Аргентина — чемпион мира. Миссия выполнена.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2023</div><div class="timeline-text">MLS, «Интер Майами». 8-й Золотой мяч. Вечный.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label scroll-reveal">Цитаты гения</div>
+    <div class="quotes-grid scroll-reveal">
+      <div class="quote-card">
+        <div class="quote-text">«Если ты видишь меня после гола кричащим с горящими глазами — это не шоу. Это моя жизнь, вся боль пути.»</div>
+        <div class="quote-source">После победы на ЧМ-2022</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Я всегда хотел выиграть Чемпионат мира. Всегда. Ничто другое не могло заполнить эту пустоту.»</div>
+        <div class="quote-source">Лионель Месси</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Мальчики из детства, мечтали ли вы так же, как я? Потому что я мечтал об этом каждую ночь.»</div>
+        <div class="quote-source">Россарио, 1995</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Неважно, сколько Золотых мячей. Если нет Чемпионата мира — есть ощущение незавершённости.»</div>
+        <div class="quote-source">До 2022 года</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Я не ухожу, пока не закончу то, что начал. Я ещё не всё сказал на поле.»</div>
+        <div class="quote-source">Интер Майами, 2023</div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">«Футбол — это не работа, это мой способ дышать. Без него я не я.»</div>
+        <div class="quote-source">Лионель Месси</div>
+      </div>
+    </div>
+
+    <div class="section-label scroll-reveal">Трофеи и достижения</div>
+    <div class="trophies-grid scroll-reveal">
+      <div class="trophy-card"><div class="trophy-icon">🌍</div><div class="trophy-title">Чемпионат мира</div><div class="trophy-detail">2022, Катар — Золотой бутс + Золотой мяч ЧМ</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🏆</div><div class="trophy-title">Лига чемпионов</div><div class="trophy-detail">2006, 2009, 2011, 2015 с «Барсой»</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🥇</div><div class="trophy-title">Чемпион Испании</div><div class="trophy-detail">10 раз с «Барселоной»</div></div>
+      <div class="trophy-card"><div class="trophy-icon">⭐</div><div class="trophy-title">Золотой мяч</div><div class="trophy-detail">2009–12, 2015, 2019, 2021, 2023 — рекорд 8!</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🇦🇷</div><div class="trophy-title">Кубок Америки</div><div class="trophy-detail">2021, 2024 × 2 — наконец-то с Аргентиной</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🎯</div><div class="trophy-title">Finalisima</div><div class="trophy-detail">2022 — Аргентина победила Италию</div></div>
+      <div class="trophy-card"><div class="trophy-icon">📊</div><div class="trophy-title">Рекорд Ла Лиги</div><div class="trophy-detail">474 гола — абсолютный рекорд Ла Лиги</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🏅</div><div class="trophy-title">The Best FIFA</div><div class="trophy-detail">2019, 2022, 2023 — лучший в FIFA</div></div>
+      <div class="trophy-card"><div class="trophy-icon">🎖️</div><div class="trophy-title">Кубок Испании</div><div class="trophy-detail">7 раз — доминирование в Испании</div></div>
+      <div class="trophy-card"><div class="trophy-icon">👑</div><div class="trophy-title">MLS Cup</div><div class="trophy-detail">Завоёвывает Америку с «Интер Майами»</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== CR7 CLUBS ==================== -->
+<section id="cr7clubs" class="section">
+  <div class="page-wrap">
+    <div class="section-label">Клубная карьера</div>
+    <div class="section-title" style="font-family:'Playfair Display';font-size:clamp(2rem,5vw,3.5rem);margin-bottom:3rem;">Клубы Криштиану Роналдо</div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header club-header-man-utd">
+        <div style="color:#cc0000;" class="club-name">Манчестер Юнайтед</div>
+        <div class="club-years">2003–2009 · 2021–2023</div>
+        <div class="club-value">£12.24 млн <span style="color:#666;font-size:1rem">→</span> <span style="color:#ff6060">Бесплатно</span></div>
+        <div class="club-value-label">Стоимость трансфера (2003 / 2021)</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">«Олд Траффорд» — место, где Криштиану стал звездой мировой величины. Под руководством Сэра Алекса Фергюсона он вырос из вспыльчивого вингера в монстра мирового футбола. Именно здесь он впервые поднял Лигу чемпионов в 2008 году.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">292</div><div class="club-stat-label">Матчей</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">145</div><div class="club-stat-label">Голов</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">1</div><div class="club-stat-label">ЛЧ</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">3</div><div class="club-stat-label">АПЛ</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ КЛУБА (2025): ~$5.4 МЛРД</div>
+      </div>
+    </div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header club-header-madrid">
+        <div style="color:#f0d080;" class="club-name">Реал Мадрид</div>
+        <div class="club-years">2009–2018 · 9 лет господства</div>
+        <div class="club-value">€80 млн</div>
+        <div class="club-value-label">Мировой рекорд на тот момент</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">«Бернабеу» — священная земля, где Роналдо достиг абсолюта. 450 голов. 4 Лиги чемпионов. Три подряд. Он стал лучшим бомбардиром ЛЧ всех времён и трижды выигрывал «Золотой мяч» в мадридский период.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">438</div><div class="club-stat-label">Матчей</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">450</div><div class="club-stat-label">Голов</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">4</div><div class="club-stat-label">ЛЧ</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">2</div><div class="club-stat-label">Ла Лига</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ КЛУБА (2025): ~$6.6 МЛРД — САМЫЙ ДОРОГОЙ КЛУБ МИРА</div>
+      </div>
+    </div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header club-header-juventus">
+        <div style="color:#fff;" class="club-name">Ювентус</div>
+        <div class="club-years">2018–2021 · Серия А</div>
+        <div class="club-value">€112 млн</div>
+        <div class="club-value-label">Рекорд Серии А</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">Переезд в Турин должен был принести Роналдо первую Лигу чемпионов с «Ювентусом». Этого не случилось, но он доминировал в Серии А, выиграл два чемпионата и стал лучшим бомбардиром за один сезон.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">134</div><div class="club-stat-label">Матчей</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">101</div><div class="club-stat-label">Голов</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">2</div><div class="club-stat-label">Серия А</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ КЛУБА (2025): ~$1.9 МЛРД</div>
+      </div>
+    </div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header" style="background:linear-gradient(135deg,#0a0500,#1a0c00);">
+        <div style="color:#00c896;" class="club-name">Al Nassr</div>
+        <div class="club-years">2023 – настоящее время · Saudi Pro League</div>
+        <div class="club-value">€200 млн/год</div>
+        <div class="club-value-label">Самая высокая зарплата в истории футбола</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">Саудовская Аравия. Многие думали — это конец. Роналдо думал иначе. 90+ голов за первые два сезона. Продолжает бить рекорды, продолжает доказывать. В 39 лет — всё ещё неостановим.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">90+</div><div class="club-stat-label">Голов</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">39</div><div class="club-stat-label">Лет — и всё ещё</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ КЛУБА (2025): ~$620 МЛН</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== MESSI CLUBS ==================== -->
+<section id="messiclubs" class="section">
+  <div class="page-wrap">
+    <div class="section-label">Клубная карьера</div>
+    <div class="section-title" style="font-family:'Playfair Display';font-size:clamp(2rem,5vw,3.5rem);margin-bottom:3rem;">Клубы Лионеля Месси</div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header club-header-barca">
+        <div style="color:#a50044;" class="club-name">Барселона <span style="color:#004d98">FC</span></div>
+        <div class="club-years">2004–2021 · 17 лет · Один клуб одна судьба</div>
+        <div class="club-value">Воспитанник</div>
+        <div class="club-value-label">Пришёл из академии Ла Масия в 13 лет</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">«Камп Ноу» — дом Месси. 17 лет, 674 гола, 10 чемпионств Испании, 4 Лиги чемпионов, 7 Кубков Испании. Он — Барселона. Расставание в 2021 году потрясло весь футбольный мир. Обоих.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">778</div><div class="club-stat-label">Матчей</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">672</div><div class="club-stat-label">Голов</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">4</div><div class="club-stat-label">ЛЧ</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">10</div><div class="club-stat-label">Ла Лига</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ КЛУБА (2025): ~$5.9 МЛРД</div>
+      </div>
+    </div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header club-header-psg">
+        <div style="color:#004170;" class="club-name">ПСЖ <span style="color:#da291c">Paris SG</span></div>
+        <div class="club-years">2021–2023 · Ligue 1</div>
+        <div class="club-value">€30 млн/год</div>
+        <div class="club-value-label">Зарплата — один из самых высокооплачиваемых</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">Два года в Париже. Тяжело, неудобно, не тот Месси. Фаны освистывали. Первый сезон провалился. Но именно здесь он выиграл Лигу 1 и набрал форму перед триумфом на ЧМ-2022.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">75</div><div class="club-stat-label">Матчей</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">32</div><div class="club-stat-label">Голов</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">2</div><div class="club-stat-label">Ligue 1</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ ПСЖ (2025): ~$4.2 МЛРД</div>
+      </div>
+    </div>
+
+    <div class="club-card scroll-reveal">
+      <div class="club-header club-header-inter">
+        <div style="color:#f7b5cd;" class="club-name">Inter Miami CF</div>
+        <div class="club-years">2023 – настоящее время · MLS</div>
+        <div class="club-value">€54 млн/год</div>
+        <div class="club-value-label">Сделка + доля в клубе</div>
+      </div>
+      <div class="club-body">
+        <div class="section-body">Флорида. Май 2023. Месси объявил: «Интер Майами». Весь футбольный мир замер. Первый же матч — победный гол со штрафного на 94-й минуте. Потом ещё. И ещё. MLS больше не та же.</div>
+        <div class="club-stats-row">
+          <div class="club-stat-item"><div class="club-stat-num">50+</div><div class="club-stat-label">Голов в MLS</div></div>
+          <div class="club-stat-item"><div class="club-stat-num">37</div><div class="club-stat-label">Лет — и магия</div></div>
+        </div>
+        <div style="font-family:'Space Mono';font-size:.6rem;color:var(--dim);margin-top:1rem;letter-spacing:.15em;">ТЕКУЩАЯ СТОИМОСТЬ «ИНТЕР МАЙАМИ» (2025): ~$1.1 МЛРД (рост на 600% с приходом Месси)</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== COMPARE ==================== -->
+<section id="compare" class="section">
+  <div class="page-wrap">
+    <div style="text-align:center;margin-bottom:4rem;">
+      <div class="section-label" style="justify-content:center;">Великий спор эпохи</div>
+      <div style="font-family:'Bebas Neue';font-size:clamp(3rem,9vw,7rem);background:linear-gradient(90deg,#ff4444,var(--gold),#4499ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:.9;filter:drop-shadow(0 0 30px rgba(201,168,76,.2));">CR7 vs MESSI</div>
+      <div style="font-family:'Cormorant Garamond';font-style:italic;font-size:1.3rem;color:var(--dim);margin-top:1rem;">Два солнца в одной галактике</div>
+    </div>
+
+    <!-- BAR COMPARISONS -->
+    <div class="section-label scroll-reveal">Статистика лицом к лицу</div>
+    <div class="compare-bars scroll-reveal" id="barsContainer">
+      <!-- будет заполнено JS -->
+    </div>
+
+    <!-- SIDE BY SIDE CARDS -->
+    <div class="vs-grid scroll-reveal">
+      <div class="vs-card cr7-card">
+        <div class="vs-name cr7">Роналдо</div>
+        <div style="font-family:'Space Mono';font-size:.65rem;letter-spacing:.15em;color:var(--dim);margin-bottom:1.5rem;text-transform:uppercase;">Сильные стороны</div>
+        <div style="font-size:1.05rem;color:#c0b8a0;line-height:2;">
+          🔴 Атлетизм и физика<br>
+          🔴 Воздушная игра (заголовки)<br>
+          🔴 Удар с обеих ног<br>
+          🔴 Голы со штрафных<br>
+          🔴 Ментальная стойкость<br>
+          🔴 Лидер в раздевалке<br>
+          🔴 Рекорд голов в ЛЧ<br>
+          🔴 Рекорд голов за сборную
+        </div>
+      </div>
+      <div class="vs-divider"><div class="vs-line"></div></div>
+      <div class="vs-card messi-card">
+        <div class="vs-name messi">Месси</div>
+        <div style="font-family:'Space Mono';font-size:.65rem;letter-spacing:.15em;color:var(--dim);margin-bottom:1.5rem;text-transform:uppercase;">Сильные стороны</div>
+        <div style="font-size:1.05rem;color:#c0b8a0;line-height:2;">
+          🔵 Техника и дриблинг<br>
+          🔵 Видение поля<br>
+          🔵 Передачи и ассисты<br>
+          🔵 Левая нога — магия<br>
+          🔵 Чтение игры<br>
+          🔵 Коллективная игра<br>
+          🔵 8 Золотых мячей<br>
+          🔵 Чемпион мира
+        </div>
+      </div>
+    </div>
+
+    <!-- TROPHIES COMPARISON -->
+    <div class="section-label scroll-reveal" style="margin-top:5rem;">Трофеи — кто больше?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:5rem;" class="scroll-reveal">
+      <div style="background:rgba(200,0,0,.04);border:1px solid rgba(200,0,0,.15);border-radius:4px;padding:2rem;">
+        <div style="font-family:'Bebas Neue';font-size:1.8rem;color:#ff4444;margin-bottom:1rem;">Роналдо</div>
+        <div style="font-size:1rem;color:#c0b8a0;line-height:2.2;">
+          🏆 ЛЧ: <strong style="color:var(--gold)">5</strong><br>
+          🥇 Золотой мяч: <strong style="color:var(--gold)">5</strong><br>
+          🌍 Чемпионат мира: <strong style="color:var(--dim)">—</strong><br>
+          🇪🇺 Евро: <strong style="color:var(--gold)">1</strong> (2016)<br>
+          📊 Нац. лига: <strong style="color:var(--gold)">1</strong><br>
+          🏟️ Чемп. Англии: <strong style="color:var(--gold)">3</strong><br>
+          🏟️ Чемп. Испании: <strong style="color:var(--gold)">2</strong><br>
+          🏟️ Чемп. Италии: <strong style="color:var(--gold)">2</strong><br>
+          📊 FIFA The Best: <strong style="color:var(--gold)">3</strong>
+        </div>
+      </div>
+      <div style="background:rgba(0,119,200,.04);border:1px solid rgba(0,119,200,.2);border-radius:4px;padding:2rem;">
+        <div style="font-family:'Bebas Neue';font-size:1.8rem;color:#4499ff;margin-bottom:1rem;">Месси</div>
+        <div style="font-size:1rem;color:#c0b8a0;line-height:2.2;">
+          🏆 ЛЧ: <strong style="color:var(--gold)">4</strong><br>
+          🥇 Золотой мяч: <strong style="color:var(--gold)">8</strong> ← рекорд<br>
+          🌍 Чемпионат мира: <strong style="color:var(--gold)">1</strong> (2022) ← главный<br>
+          🇦🇷 Кубок Америки: <strong style="color:var(--gold)">3</strong><br>
+          🏅 Finalisima: <strong style="color:var(--gold)">1</strong><br>
+          🏟️ Чемп. Испании: <strong style="color:var(--gold)">10</strong><br>
+          🏟️ Кубок Испании: <strong style="color:var(--gold)">7</strong><br>
+          📊 FIFA The Best: <strong style="color:var(--gold)">3</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERDICT -->
+    <div class="verdict scroll-reveal">
+      <div class="verdict-title">«Так кто же лучший?»</div>
+      <div class="verdict-text">
+        Этот вопрос неправильный. Роналдо — воплощение того, чего может достичь человек силой воли, тяжёлым трудом и железной дисциплиной. Месси — явление природы, которое случается раз в несколько поколений.<br><br>
+        Роналдо доказал: совершенство можно создать. Месси доказал: гениальность существует.<br><br>
+        Нам невероятно повезло жить в эпоху, когда оба одновременно были на поле. История не знала ничего подобного — и, возможно, не узнает снова.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div>GOAT WARS · Роналдо & Месси · Легенды Футбола</div>
+  <div style="margin-top:.5rem;font-size:.5rem;">Данные актуальны на 2025 год · Создано с ❤️ к игре</div>
+</footer>
+
+<script>
+  // ===== TAB SWITCHING =====
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const tabs = { cr7: 0, messi: 1, cr7clubs: 2, messiclubs: 3, compare: 4 };
+    document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
+    window.scrollTo({ top: document.querySelector('.nav-wrap').offsetTop, behavior: 'smooth' });
+    if (id === 'compare') setTimeout(animateBars, 300);
+    setTimeout(revealScrollElements, 100);
+  }
+
+  // ===== SCROLL REVEAL =====
+  function revealScrollElements() {
+    document.querySelectorAll('.scroll-reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 50) el.classList.add('visible');
+    });
+  }
+  window.addEventListener('scroll', revealScrollElements);
+  setTimeout(revealScrollElements, 200);
+
+  // ===== BAR COMPARISON DATA =====
+  const compareData = [
+    { label: 'Голы в карьере', cr7: 900, messi: 850, cr7disp: '900+', messidisp: '850+' },
+    { label: 'Золотой мяч', cr7: 5, messi: 8, cr7disp: '5', messidisp: '8' },
+    { label: 'Лига чемпионов', cr7: 5, messi: 4, cr7disp: '5', messidisp: '4' },
+    { label: 'Голы за сборную', cr7: 136, messi: 109, cr7disp: '136', messidisp: '109' },
+    { label: 'Матчи за сборную', cr7: 213, messi: 185, cr7disp: '213', messidisp: '185' },
+    { label: 'Голы Лиги чемпионов', cr7: 140, messi: 129, cr7disp: '140', messidisp: '129' },
+    { label: 'Хет-трики', cr7: 61, messi: 57, cr7disp: '61', messidisp: '57' },
+    { label: 'Ассисты в карьере', cr7: 250, messi: 370, cr7disp: '250+', messidisp: '370+' },
+  ];
+
+  function animateBars() {
+    const container = document.getElementById('barsContainer');
+    container.innerHTML = '';
+    compareData.forEach(d => {
+      const max = Math.max(d.cr7, d.messi);
+      const cr7pct = (d.cr7 / max * 100).toFixed(1);
+      const messpct = (d.messi / max * 100).toFixed(1);
+      container.innerHTML += `
+        <div class="compare-row">
+          <div class="bar-left" style="text-align:right;">
+            <div style="font-family:'Bebas Neue';font-size:1.5rem;color:#ff4444;">${d.cr7disp}</div>
+            <div class="bar-wrap"><div class="bar-fill cr7" data-width="${cr7pct}" style="width:0%"></div></div>
+          </div>
+          <div class="compare-label">${d.label}</div>
+          <div>
+            <div style="font-family:'Bebas Neue';font-size:1.5rem;color:#4499ff;">${d.messidisp}</div>
+            <div class="bar-wrap"><div class="bar-fill messi" data-width="${messpct}" style="width:0%"></div></div>
+          </div>
+        </div>`;
+    });
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    });
+  }
+</script>
+</body>
+</html>
